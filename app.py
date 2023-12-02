@@ -12,8 +12,8 @@ c = conn.cursor()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"]
-    allow_credentials = True
+    allow_origins=["http://127.0.0.1:8080", "http://localhost:8000"],
+    allow_credentials=True,
     allow_methods= ["*"],
     allow_headers= ["*"]
 )
@@ -32,11 +32,10 @@ async def mostrar_dispositivo():
     c.execute('SELECT * FROM dispositivo')
     response=[{"id": row[0], "nombre": row[1], "valor": row[2]} for row in c.fetchall()]
     return response 
-
-@app.get("/dispositivo{valor}")
-async def obtener_dispositivo(valor: str):
-    """obtiene un valor  """
-    c.execute('SELECT * FROM dispositivo WHERE valor = ?', (valor,))
+@app.get("/led/{id}")
+async def obtener_led(id: str):
+    """Obtiene un valor"""
+    c.execute('SELECT * FROM dispositivo WHERE id = ?', (id,))
     row = c.fetchone()
     if row:
         dispositivo = {"id": row[0], "nombre": row[1], "valor": row[2]}
@@ -44,11 +43,9 @@ async def obtener_dispositivo(valor: str):
     else:
         raise HTTPException(status_code=404, detail="Dispositivo no encontrado")
 
-
-@app.put("dispositivo/{valor}")
-async def actualizar_dispositivo(valor: str, dipositivo: Dispositivo):
+@app.put("/potenciometro/{id}")
+async def actualizar_dispositivo(id: str, dispositivo: Dispositivo):
     """Actualiza el valor del dispositivo"""
-    c.execute('UPDATE dispositivo SET  nombre = ?, valor= ? WHERE valor = ?',
-               (dispositivo.nombre, dispositivo.valor, valor))
+    c.execute('UPDATE dispositivo SET dispositivo = ?, valor = ? WHERE id = ?', (dispositivo.nombre, dispositivo.valor, id))
     conn.commit()
-    return {"mensaje": "Dispositivo actualizando correctamente"}
+    return {"mensaje": "Dispositivo actualizado correctamente"}
