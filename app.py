@@ -12,7 +12,10 @@ c = conn.cursor()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:8080", "http://localhost:8000"],
+    allow_origins=["http://127.0.0.1:8080", 
+                   "http://localhost:8000", 
+                   "https://iot-backen-5cc85ad97e0a.herokuapp.com", 
+                   "https://iotfront-b4cb0f781573.herokuapp.com"],
     allow_credentials=True,
     allow_methods= ["*"],
     allow_headers= ["*"]
